@@ -249,7 +249,7 @@ body{
 // DATA_START
 const D = {
   date: "Wednesday, June 24, 2026",
-  updated: "10:42 AM",
+  updated: "4:20 PM",
   wc_news: [
     "⭐ Messi is now the all-time top World Cup scorer",
     "🍁 Canada claims their first-ever World Cup win",
@@ -264,9 +264,10 @@ const D = {
     {time:"6:00 pm",  teams:"Czechia vs Mexico"},
   ],
   reminders: [
-    {id:"r1", icon:"🛒", text:"Grocery shop for pasta salad — Henry's soccer party Saturday in Huntington Beach", date:"FRI JUN 26", urgent:true},
-    {id:"r2", icon:"🧳", text:"Pack Henry for Pali Adventures Camp — South Coast pickup this Sunday", date:"SUN JUN 28", urgent:false},
-    {id:"r3", icon:"⚒️", text:"Steve Lee floor replacement crew in the house all week (9am–5pm)", date:"ALL WEEK", urgent:false},
+    {id:"r1", icon:"🍽️", text:"Dolphin Club Week 4 lunch orders due tomorrow by 5pm", date:"THU JUN 25", urgent:true},
+    {id:"r2", icon:"🛒", text:"Grocery shop for Henry's Pre-MLS team party (Sat, Huntington Beach)", date:"FRI JUN 26", urgent:true},
+    {id:"r3", icon:"🧳", text:"Pack Henry for Pali Adventures Camp — South Coast drop-off Sunday", date:"SUN JUN 28", urgent:false},
+    {id:"r4", icon:"⚒️", text:"Steve Lee floor replacement crew in the house all week (9am–5pm)", date:"ALL WEEK", urgent:false},
   ],
   week: [
     {dow:"Mon", date:22, past:true, events:[{label:"Maid Day 11am",cls:"house"},{label:"Henry Dr. Polsky 2:30pm",cls:"henry"}]},
@@ -278,11 +279,16 @@ const D = {
     {dow:"Sun", date:28, events:[{label:"Drop Henry @ Pali Camp 12pm",cls:"henry"},{label:"Floor Replacement 9am",cls:"house"}]},
   ],
   today_events: [
-    {icon:"⚒️", label:"Steve Lee: Floor Replacement", time:"9:00 am – 5:00 pm", cls:"house", loc:"At home"},
-    {icon:"⚽", label:"GDP Elite Summer Camp (Henry)", time:"All day — last day Fri Jun 26", cls:"henry"},
+    {icon:"⚒️", label:"Steve Lee: Floor Replacement", time:"9:00 am – 5:00 pm", cls:"house", loc:"At home", url:"https://www.google.com/calendar/event?eid=N3E2bjRuN3RrZ2xrN3FtMzVsOXFhcjg0MmpfMjAyNjA2MjRUMTYwMDAwWiBiYmljbDF0NTRlY2J0b2duanJ2NnN2ZnNmY0Bn&ctz=America/Los_Angeles"},
+    {icon:"⚽", label:"GDP Elite Summer Camp (Henry)", time:"All day — last day Fri Jun 26", cls:"henry", url:"https://www.google.com/calendar/event?eid=YzYxaTc0M2puOWlvNTYxamZrNGkwZGd1dGsgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
   ],
   emails: [
-    {from:"Pali Adventures", subj:"South Coast Travel Info for Sunday, June 28th", snip:"Pickup/travel details to prepare Henry for camp arrival this Sunday.", unread:false},
+    {from:"The Dolphin Club", subj:"Summer Camp Week 4 — lunch orders due Jun 25 (5pm)", snip:"Week 4 lunch orders are due tomorrow. Orcas (4th–6th) Lagoon Mon Jun 29, 12–3pm.", unread:true, url:"https://mail.google.com/mail/u/0/#all/19efbd64b9da808c"},
+    {from:"SoCal Reds (US Club Soccer)", subj:"Copa Americana 2026 — team prep for SoCal Reds BU11", snip:"Prepare your team for Copa Americana (8/7). View status of tasks online.", unread:true, url:"https://mail.google.com/mail/u/0/#all/19ef9ac821df048f"},
+    {from:"Pali Adventures", subj:"South Coast Travel Info for Sunday, June 28th", snip:"Pickup/travel details to prepare Henry for camp arrival this Sunday.", unread:false, url:"https://mail.google.com/mail/u/0/#all/19ef6d3a026d2261"},
+    {from:"The Dolphin Club", subj:"Classroom Chat — Week 4 newsletter (Henry & Ripley)", snip:"Week 4 newsletter is out; lunch orders due tomorrow Jun 25 at 5pm.", unread:true, url:"https://mail.google.com/mail/u/0/#all/19efbd37e81d99ca"},
+    {from:"Everbrook Academy", subj:"Payment Successful — Everbrook Academy", snip:"Your payment on 06/24 was processed successfully.", unread:true, url:"https://mail.google.com/mail/u/0/#all/19efb2d4811644ee"},
+    {from:"Henry's Dentist", subj:"Upcoming dental appointment — Tue Jul 7, 3:30pm", snip:"Reminder of Henry's next dental appointment. Call to reschedule if needed.", unread:false, url:"https://mail.google.com/mail/u/0/#all/19ef7fec29414bc4"},
   ],
   meals: [
     {day:"MON", name:"", recipe:""},
