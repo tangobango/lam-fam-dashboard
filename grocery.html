@@ -129,8 +129,8 @@ const G = {
       {item:"Red onion", qty:"1 small"},
       {item:"Red bell pepper", qty:"1"},
       {item:"Carrots", qty:"2"},
-      {item:"Celery", qty:"1 bunch", guess:true},
-      {item:"Green onions", qty:"1 bunch", guess:true, optional:true},
+      {item:"Celery", qty:"1 bunch", guess:true, from:"Egg Salad Sandwiches"},
+      {item:"Green onions", qty:"1 bunch", guess:true, optional:true, from:"Egg Salad Sandwiches"},
     ]},
     {name:"🍗 Meat & Protein", items:[
       {item:"Boneless skinless chicken thighs", qty:"1½ lb"},
@@ -140,12 +140,12 @@ const G = {
       {item:"Extra virgin olive oil", qty:"1 tbsp"},
     ]},
     {name:"🍞 Bakery", items:[
-      {item:"Sandwich bread", qty:"1 loaf", guess:true},
+      {item:"Sandwich bread", qty:"1 loaf", guess:true, from:"Egg Salad Sandwiches"},
     ]},
     {name:"🧀 Dairy & Condiments", items:[
-      {item:"Eggs", qty:"1 dozen", guess:true},
-      {item:"Mayonnaise", qty:"", guess:true},
-      {item:"Dijon mustard", qty:"", guess:true, optional:true},
+      {item:"Eggs", qty:"1 dozen", guess:true, from:"Egg Salad Sandwiches"},
+      {item:"Mayonnaise", qty:"", guess:true, from:"Egg Salad Sandwiches"},
+      {item:"Dijon mustard", qty:"", guess:true, optional:true, from:"Egg Salad Sandwiches"},
       {item:"Tzatziki or white sauce", qty:"", optional:true},
     ]},
     {name:"🧂 Spices & Seasoning", items:[
@@ -156,7 +156,7 @@ const G = {
       {item:"Dried oregano", qty:"¾ tsp"},
       {item:"Ground cinnamon", qty:"½ tsp"},
       {item:"Kosher salt", qty:"1½ tsp"},
-      {item:"Black pepper", qty:"", guess:true, optional:true},
+      {item:"Black pepper", qty:"", guess:true, optional:true, from:"Egg Salad Sandwiches"},
       {item:"Red pepper flakes", qty:"½ tsp", optional:true},
     ]},
   ],
@@ -193,7 +193,7 @@ function render(){
     notes.push('🍽️ Skipped (no shopping needed): '+sk+'.');
   }
   var hasGuess=G.aisles.some(function(a){return a.items.some(function(it){return it.guess;});});
-  if(hasGuess){notes.push('Items tagged <span class="guess">guess</span> were smart-estimated for meals without a recipe link — double-check them.');}
+  if(hasGuess){notes.push('Items tagged <span class="guess">guess · meal</span> were smart-estimated for meals without a recipe link — double-check them.');}
   var noteEl=document.getElementById('src-note');
   if(notes.length){noteEl.innerHTML=notes.join('<br>');}else{noteEl.style.display='none';}
 
@@ -207,7 +207,7 @@ function render(){
       var on=!!checks[key];
       var qty=it.qty?'<span class="qty">'+escHtml(it.qty)+'</span> ':'';
       var opt=it.optional?' <span class="opt">optional</span>':'';
-      var gs=it.guess?' <span class="guess">guess</span>':'';
+      var gs=it.guess?' <span class="guess">guess'+(it.from?' · '+escHtml(it.from):'')+'</span>':'';
       h+='<div class="item'+(on?' checked':'')+'" data-key="'+escHtml(key)+'">'
         +'<div class="box">'+(on?'✓':'')+'</div>'
         +'<div class="label">'+qty+escHtml(it.item)+opt+gs+'</div></div>';
