@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ Henry's Soccer Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#143226;--muted:#60706a;--border:#e2ebe6;
+  --green:#16a34a;--green-dark:#14532d;--green-mid:#bbf7d0;--green-bg:#f0fdf4;
+  --blue:#2563eb;--blue-bg:#eff6ff;--gold:#ca8a04;--gold-bg:#fefce8;
+  --red:#dc2626;--red-bg:#fef2f2;--r:20px;--r-sm:12px;--r-pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:var(--text);padding-bottom:48px}
+.header{background:linear-gradient(135deg,#052e16 0%,#166534 45%,#16a34a 100%);padding:24px 20px 22px;position:relative;overflow:hidden}
+.header::after{content:'⚽';position:absolute;right:20px;top:10px;font-size:52px;opacity:.18;transform:rotate(-10deg)}
+.hdr-inner{max-width:980px;margin:0 auto;position:relative;z-index:1}
+.hdr-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:rgba(255,255,255,.86);text-decoration:none;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.hdr-back:hover{color:#fff}
+.hdr-title{font-size:clamp(28px,6vw,46px);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1}
+.hdr-sub{font-size:14px;color:rgba(255,255,255,.76);font-weight:700;margin-top:6px}
+.hdr-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-pill);font-size:12px;font-weight:800}
+.hdr-meta .badge{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.22)}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 0;display:grid;grid-template-columns:1.45fr .95fr;gap:16px;align-items:start}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--surface);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 8px rgba(20,50,38,.06),0 12px 34px rgba(20,50,38,.08)}
+.panel-hdr{display:flex;align-items:center;gap:10px;padding:14px 18px;background:linear-gradient(135deg,var(--green-mid),var(--green-bg));border-bottom:1px solid var(--border)}
+.panel-icon{width:34px;height:34px;border-radius:10px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:18px}
+.panel-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--green-dark);flex:1}
+.panel-body{padding:12px 18px 16px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:560px){.summary{grid-template-columns:1fr}}
+.stat{background:var(--surface);border-radius:var(--r-sm);padding:13px 14px;border:1px solid var(--border);box-shadow:0 3px 14px rgba(20,50,38,.05)}
+.stat-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.stat-value{font-size:22px;font-weight:900;margin-top:3px;color:var(--green-dark)}
+.stat-note{font-size:12px;color:var(--muted);font-weight:700;margin-top:1px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filter{border:1px solid var(--border);background:#fff;border-radius:var(--r-pill);padding:7px 12px;font-family:inherit;font-size:12px;font-weight:900;color:var(--muted);cursor:pointer}
+.filter.active{background:var(--green);border-color:var(--green);color:#fff}
+.event-list{display:flex;flex-direction:column;gap:10px}
+.event{border:1px solid var(--border);border-radius:16px;padding:12px 14px;background:#fff;display:grid;grid-template-columns:auto 1fr;gap:12px}
+.datebox{width:58px;border-radius:14px;background:var(--green-bg);border:1px solid var(--green-mid);text-align:center;padding:7px 5px;color:var(--green-dark);height:max-content}
+.datebox .mon{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.datebox .day{font-size:22px;font-weight:900;line-height:1}
+.event-top{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.event-name{font-size:15px;font-weight:900;line-height:1.25}
+.event-link,.tourney-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentColor}
+.event-link:hover,.tourney-link:hover{border-bottom-style:solid}
+.event-time,.event-loc{font-size:12px;color:var(--muted);font-weight:700;margin-top:3px}
+.event-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;border-radius:var(--r-pill);padding:3px 8px}
+.tag.training{background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-mid)}
+.tag.tournament{background:var(--gold-bg);color:#854d0e;border:1px solid #fde68a}
+.tag.game{background:var(--blue-bg);color:#1d4ed8;border:1px solid #bfdbfe}
+.tag.lesson{background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe}
+.tag.other{background:#f8fafc;color:#475569;border:1px solid #e2e8f0}
+.tourney{border:1px solid var(--border);border-radius:16px;padding:13px 14px;margin-bottom:10px;background:#fff}
+.tourney-name{font-size:15px;font-weight:900}
+.tourney-meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+.hotel{margin-top:10px;padding:9px 10px;border-radius:12px;font-size:12px;font-weight:800}
+.hotel.yes{background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-mid)}
+.hotel.no{background:#f8fafc;color:#475569;border:1px solid #e2e8f0}
+.hotel.tbd{background:var(--gold-bg);color:#854d0e;border:1px solid #fde68a}
+.empty{padding:18px 4px;color:var(--muted);font-size:14px;font-weight:700;text-align:center}
+.manual-note{font-size:12px;color:var(--muted);font-weight:700;line-height:1.45;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.foot{text-align:center;font-size:12px;color:var(--muted);font-weight:700;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-inner">
+    <a class="hdr-back" href="index.html">← Back to dashboard</a>
+    <div class="hdr-title">⚽ Henry's Soccer Hub</div>
+    <div class="hdr-sub">Training, games, tournaments, and private lessons from Henry's calendar</div>
+    <div class="hdr-meta">
+      <div class="badge">📅 <span id="s-range"></span></div>
+      <div class="badge">🔄 Updated <span id="s-updated"></span></div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section>
+    <div class="summary">
+      <div class="stat"><div class="stat-label">Upcoming</div><div class="stat-value" id="stat-total">0</div><div class="stat-note">soccer events</div></div>
+      <div class="stat"><div class="stat-label">Next Up</div><div class="stat-value" id="stat-next">—</div><div class="stat-note" id="stat-next-note">No event yet</div></div>
+      <div class="stat"><div class="stat-label">Tournaments</div><div class="stat-value" id="stat-tourneys">0</div><div class="stat-note">next 12 months</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <div class="panel-icon">📆</div>
+        <div class="panel-title">Soccer Calendar</div>
+      </div>
+      <div class="panel-body">
+        <div class="filters" id="filters"></div>
+        <div class="event-list" id="event-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="panel-hdr">
+      <div class="panel-icon">🏆</div>
+      <div class="panel-title">Tournament Widget</div>
+    </div>
+    <div class="panel-body">
+      <div id="tournament-list"></div>
+      <div class="manual-note">Hotel status is manual for now. Update the `SOCCER_HOTELS` block in this file using the event id from Claude's generated year-long tournament data.</div>
+    </div>
+  </aside>
+</main>
+
+<div class="foot">Lam Fam · soccer hub refreshes with the Henry calendar</div>
+
+<script>
+// SOCCER_DATA_START
+const S = {
+  updated: "Wed Jun 24, 12:20 PM",
+  range: "Next 90 days",
+  source_calendar: "Henry Calendar",
+  events: [
+    {id:"sample-training-2026-06-24", title:"GDP Elite Summer Camp", type:"training", date:"2026-06-24", day:"Wed Jun 24", time:"All day", location:"", notes:"Henry soccer camp"},
+    {id:"sample-party-2026-06-27", title:"Pre-MLS Party", type:"other", date:"2026-06-27", day:"Sat Jun 27", time:"1:30 PM", location:"", notes:"Soccer-related family event"},
+  ],
+  tournaments: [
+    {id:"sample-tournament-2026-08-08", title:"TOURNAMENT GAME - SoCal Reds", type:"tournament", date:"2026-08-08", day:"Sat Aug 8", time:"Time TBD", location:"", notes:"Sample tournament entry"},
+  ],
+};
+// SOCCER_DATA_END
+
+// Manual tournament hotel status. Claude should preserve this block.
+// Use event id keys from S.events. status: "yes", "no", or "tbd".
+const SOCCER_HOTELS = {
+  // "tournament-event-id": {status:"tbd", note:"Need to decide"},
+};
+
+const TYPES = [
+  {id:"all", label:"All"},
+  {id:"training", label:"Training"},
+  {id:"game", label:"Games"},
+  {id:"tournament", label:"Tournaments"},
+  {id:"lesson", label:"Lessons"},
+  {id:"other", label:"Other"},
+];
+let currentFilter = "all";
+
+function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function prettyType(t){return ({training:"Training",game:"Game",tournament:"Tournament",lesson:"Lesson",other:"Soccer"})[t]||"Soccer";}
+function monthDay(dateStr){
+  const d = new Date(dateStr+"T12:00:00");
+  if(isNaN(d)) return {mon:"", day:""};
+  return {mon:d.toLocaleDateString("en-US",{month:"short"}), day:d.toLocaleDateString("en-US",{day:"numeric"})};
+}
+function sortedEvents(){
+  return (S.events||[]).slice().sort(function(a,b){
+    return String(a.date).localeCompare(String(b.date)) || String(a.time||"").localeCompare(String(b.time||""));
+  });
+}
+function isTournamentLabel(e){
+  return /^TOURNAMENT(?:\s+GAME)?\b/i.test(String(e&&e.title||""));
+}
+function tournamentEvents(){
+  const source = Array.isArray(S.tournaments) ? S.tournaments : (S.events||[]).filter(e => e.type==="tournament");
+  return source.filter(isTournamentLabel).slice().sort(function(a,b){
+    return String(a.date).localeCompare(String(b.date)) || String(a.time||"").localeCompare(String(b.time||""));
+  });
+}
+function filteredEvents(){
+  const events = sortedEvents();
+  if(currentFilter==="tournament") return tournamentEvents();
+  return currentFilter==="all" ? events : events.filter(e => e.type===currentFilter);
+}
+function renderStats(){
+  const events = sortedEvents();
+  const tourneys = tournamentEvents();
+  const next = events[0];
+  document.getElementById("s-range").textContent = S.range || "Upcoming";
+  document.getElementById("s-updated").textContent = S.updated || "";
+  document.getElementById("stat-total").textContent = events.length;
+  document.getElementById("stat-tourneys").textContent = tourneys.length;
+  document.getElementById("stat-next").textContent = next ? monthDay(next.date).mon+" "+monthDay(next.date).day : "—";
+  document.getElementById("stat-next-note").textContent = next ? next.title : "No event yet";
+}
+function renderFilters(){
+  document.getElementById("filters").innerHTML = TYPES.map(function(t){
+    return '<button class="filter '+(currentFilter===t.id?'active':'')+'" data-filter="'+esc(t.id)+'">'+esc(t.label)+'</button>';
+  }).join("");
+  document.querySelectorAll(".filter").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      currentFilter = btn.getAttribute("data-filter");
+      render();
+    });
+  });
+}
+function renderEvents(){
+  const events = filteredEvents();
+  if(!events.length){
+    document.getElementById("event-list").innerHTML = '<div class="empty">No soccer events in this filter.</div>';
+    return;
+  }
+  document.getElementById("event-list").innerHTML = events.map(function(e){
+    const md = monthDay(e.date);
+    const loc = e.location ? '<div class="event-loc">📍 '+esc(e.location)+'</div>' : '';
+    const notes = e.notes ? '<div class="event-loc">'+esc(e.notes)+'</div>' : '';
+    const title = esc(e.title);
+    const titleHtml = e.url ? '<a class="event-link" href="'+esc(e.url)+'" target="_blank" rel="noopener">'+title+' ↗</a>' : title;
+    return '<article class="event">'
+      +'<div class="datebox"><div class="mon">'+esc(md.mon)+'</div><div class="day">'+esc(md.day)+'</div></div>'
+      +'<div><div class="event-top"><div><div class="event-name">'+titleHtml+'</div><div class="event-time">'+esc(e.day || e.date)+' · '+esc(e.time || "Time TBD")+'</div>'+loc+notes+'</div></div>'
+      +'<div class="event-tags"><span class="tag '+esc(e.type||"other")+'">'+esc(prettyType(e.type))+'</span></div></div>'
+      +'</article>';
+  }).join("");
+}
+function renderTournaments(){
+  const tourneys = tournamentEvents();
+  if(!tourneys.length){
+    document.getElementById("tournament-list").innerHTML = '<div class="empty">No tournaments found in this window.</div>';
+    return;
+  }
+  document.getElementById("tournament-list").innerHTML = tourneys.map(function(e){
+    const hotel = SOCCER_HOTELS[e.id] || {status:"tbd", note:"Hotel status not set"};
+    const label = hotel.status==="yes" ? "Hotel: yes" : hotel.status==="no" ? "Hotel: no" : "Hotel: TBD";
+    const title = esc(e.title);
+    const titleHtml = e.url ? '<a class="tourney-link" href="'+esc(e.url)+'" target="_blank" rel="noopener">'+title+' ↗</a>' : title;
+    return '<div class="tourney">'
+      +'<div class="tourney-name">'+titleHtml+'</div>'
+      +'<div class="tourney-meta">'+esc(e.day || e.date)+' · '+esc(e.time || "Time TBD")+'</div>'
+      +(e.location?'<div class="tourney-meta">📍 '+esc(e.location)+'</div>':'')
+      +'<div class="hotel '+esc(hotel.status||"tbd")+'">'+esc(label)+(hotel.note?' · '+esc(hotel.note):'')+'</div>'
+      +'</div>';
+  }).join("");
+}
+function render(){
+  renderStats();
+  renderFilters();
+  renderEvents();
+  renderTournaments();
+}
+render();
+</script>
+</body>
+</html>
