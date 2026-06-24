@@ -140,6 +140,8 @@ body{
 .ev-bubble.house{background:linear-gradient(135deg,#a78bfa,#7c3aed);box-shadow:0 3px 8px var(--house-shadow)}
 .ev-info{flex:1;min-width:0}
 .ev-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentColor}
+.ev-link:hover{border-bottom-style:solid}
 .ev-time{font-size:12px;color:var(--muted);margin-top:1px;font-weight:600}
 .ev-loc{font-size:11px;color:var(--muted);margin-top:1px}
 .ev-tag{display:inline-flex;padding:2px 8px;border-radius:var(--r-pill);font-size:10px;font-weight:800;
@@ -196,6 +198,8 @@ body{
 .day.today .day-num{color:var(--house)}
 .day-evs{display:flex;flex-direction:column;gap:3px}
 .day-ev{font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;line-height:1.3}
+.day-ev[href]{text-decoration:none;display:block}
+.day-ev[href]:hover{filter:brightness(.96)}
 .day-ev.henry{background:var(--henry-mid);color:var(--henry-dark)}
 .day-ev.ripley{background:var(--ripley-mid);color:var(--ripley-dark)}
 .day-ev.house{background:var(--house-mid);color:var(--house-dark)}
@@ -223,6 +227,8 @@ body{
   letter-spacing:.04em;margin-bottom:3px;display:flex;align-items:center;gap:5px}
 .unread{width:8px;height:8px;background:#ef4444;border-radius:50%;flex-shrink:0}
 .email-subj{font-size:13px;font-weight:700;line-height:1.4;color:var(--text)}
+.email-link{color:var(--text);text-decoration:none;border-bottom:1px dashed #fca5a5}
+.email-link:hover{border-bottom-style:solid;color:#b91c1c}
 .email-snip{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:600}
 
@@ -277,8 +283,6 @@ const D = {
   ],
   emails: [
     {from:"Pali Adventures", subj:"South Coast Travel Info for Sunday, June 28th", snip:"Pickup/travel details to prepare Henry for camp arrival this Sunday.", unread:false},
-    {from:"OC Soccer Club", subj:"OCSC vs. Miami FC | 4:00pm Kickoff", snip:"Where to watch today's match — 4:00pm PT kickoff.", unread:true},
-    {from:"Touch N Go Soccer", subj:"Registration Extended! July Summer League", snip:"Not too late to join the July Summer League — full 12-week season.", unread:true},
   ],
   meals: [
     {day:"MON", name:"", recipe:""},
@@ -318,7 +322,7 @@ const D = {
 <div class="links-bar">
   <div class="links-inner">
     <span class="links-label">🔗 Links</span>
-    <a class="link-pill henry soon" title="Coming soon">⚽ Henry's Soccer Hub</a>
+    <a class="link-pill henry" href="soccer.html" title="Henry's soccer calendar and tournaments">⚽ Henry's Soccer Hub</a>
     <a class="link-pill ripley soon" title="Coming soon">🏕️ Summer Camp Guide</a>
     <a class="link-pill house" href="grocery.html" title="Grocery list from this week's recipes">🛒 Grocery List</a>
   </div>
@@ -419,12 +423,14 @@ document.getElementById('upd').textContent=D.updated;
   } else {
     D.today_events.forEach(function(ev){
       var name=ev.cls==='henry'?'Henry':ev.cls==='ripley'?'Ripley':'Household';
+      var label=escHtml(ev.label||'');
+      var labelHtml=ev.url?'<a class="ev-link" href="'+escHtml(ev.url)+'" target="_blank" rel="noopener">'+label+' ↗</a>':label;
       h+=`<div class="ev">
         <div class="ev-bubble ${ev.cls}">${ev.icon||'📌'}</div>
         <div class="ev-info">
-          <div class="ev-name">${ev.label}</div>
-          ${ev.time?`<div class="ev-time">⏰ ${ev.time}</div>`:''}
-          ${ev.loc?`<div class="ev-loc">📍 ${ev.loc}</div>`:''}
+          <div class="ev-name">${labelHtml}</div>
+          ${ev.time?`<div class="ev-time">⏰ ${escHtml(ev.time)}</div>`:''}
+          ${ev.loc?`<div class="ev-loc">📍 ${escHtml(ev.loc)}</div>`:''}
           <span class="ev-tag ${ev.cls}">${name}</span>
         </div>
       </div>`;
@@ -467,7 +473,10 @@ renderReminders();
       <div class="day-num">${day.date}</div>
       <div class="day-evs">`;
     (day.events||[]).forEach(function(ev){
-      h+=`<div class="day-ev ${ev.cls}">${ev.label}</div>`;
+      var label=escHtml(ev.label||'');
+      h+=ev.url
+        ? `<a class="day-ev ${ev.cls}" href="${escHtml(ev.url)}" target="_blank" rel="noopener">${label} ↗</a>`
+        : `<div class="day-ev ${ev.cls}">${label}</div>`;
     });
     h+='</div></div>';
   });
@@ -504,10 +513,12 @@ renderMeals();
 (function(){
   var h='';
   D.emails.forEach(function(e){
+    var subj=escHtml(e.subj||'');
+    var subjHtml=e.url?'<a class="email-link" href="'+escHtml(e.url)+'" target="_blank" rel="noopener">'+subj+' ↗</a>':subj;
     h+=`<div class="email">
-      <div class="email-from">${e.unread?'<span class="unread"></span>':''} ${e.from}</div>
-      <div class="email-subj">${e.subj}</div>
-      <div class="email-snip">${e.snip}</div>
+      <div class="email-from">${e.unread?'<span class="unread"></span>':''} ${escHtml(e.from||'')}</div>
+      <div class="email-subj">${subjHtml}</div>
+      <div class="email-snip">${escHtml(e.snip||'')}</div>
     </div>`;
   });
   document.getElementById('emails-body').innerHTML=h;
