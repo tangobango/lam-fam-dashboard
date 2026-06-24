@@ -47,6 +47,13 @@ body{
 .hdr-right{text-align:right;color:#fff}
 .hdr-date{font-size:clamp(13px,2vw,17px);font-weight:700}
 .hdr-time{font-size:22px;font-weight:900;margin-top:2px}
+.hdr-wx{margin-top:8px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:var(--r-pill);
+  padding:5px 11px;backdrop-filter:blur(4px);transition:background .2s ease}
+.hdr-wx:hover{background:rgba(255,255,255,.22)}
+.hdr-wx .wx-ic{font-size:18px;line-height:1}
+.hdr-wx .wx-t{font-size:15px;font-weight:900;color:#fff}
+.hdr-wx .wx-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.72)}
 .hdr-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .hdr-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r-pill);
   font-size:12px;font-weight:700;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);
@@ -76,10 +83,10 @@ body{
 /* ═══ GRID ═══ */
 .main{max-width:980px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:18px;
   grid-template-columns:1fr 1fr;
-  grid-template-areas:"weather today" "remind wc" "week week" "meals emails"}
+  grid-template-areas:"today today" "remind wc" "week week" "meals emails"}
 @media(max-width:620px){
   .main{grid-template-columns:1fr;
-    grid-template-areas:"weather""today""remind""wc""week""meals""emails"}}
+    grid-template-areas:"today""remind""wc""week""meals""emails"}}
 
 /* ═══ CARD BASE ═══ */
 .card{background:var(--surface);border-radius:var(--r);overflow:hidden;
@@ -98,10 +105,6 @@ body{
 .card-body{padding:14px 18px 18px}
 
 /* Per-section accent colors */
-.c-weather .card-hdr{background:linear-gradient(135deg,#e0f2fe,#f0f9ff)}
-.c-weather .card-icon{background:#bae6fd;--icon-shadow:var(--wx-shadow)}
-.c-weather{box-shadow:0 2px 6px var(--wx-shadow),0 8px 30px rgba(2,132,199,.1)}
-
 .c-today .card-hdr{background:linear-gradient(135deg,var(--house-mid),var(--house-bg))}
 .c-today .card-icon{background:var(--house-mid);--icon-shadow:var(--house-shadow)}
 .c-today{box-shadow:0 2px 6px var(--house-shadow),0 8px 30px rgba(124,58,237,.08)}
@@ -125,20 +128,6 @@ body{
 .c-emails .card-hdr{background:linear-gradient(135deg,#fee2e2,#fff5f5)}
 .c-emails .card-icon{background:#fecaca;--icon-shadow:rgba(239,68,68,.2)}
 .c-emails{box-shadow:0 2px 6px rgba(239,68,68,.15),0 8px 30px rgba(239,68,68,.08)}
-
-/* ═══ WEATHER ═══ */
-.c-weather{grid-area:weather}
-.wx-hero{display:flex;align-items:center;gap:16px}
-.wx-big-icon{font-size:60px;line-height:1;animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.wx-right{flex:1}
-.wx-temp{font-size:52px;font-weight:900;line-height:1;color:var(--text)}
-.wx-temp sup{font-size:22px;font-weight:700;vertical-align:super}
-.wx-desc{font-size:15px;font-weight:700;color:var(--muted);margin-top:2px}
-.wx-pills{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
-.wx-pill{padding:5px 11px;border-radius:var(--r-pill);font-size:12px;font-weight:700;
-  background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
-.wx-error{color:var(--muted);font-size:13px;font-style:italic}
 
 /* ═══ TODAY ═══ */
 .c-today{grid-area:today}
@@ -187,7 +176,9 @@ body{
   text-align:center;background:var(--henry-mid);color:var(--henry-dark)}
 .match-badge.live{background:#fee2e2;color:#b91c1c;animation:pulse 1.5s infinite}
 .match-badge.final{background:#f3f4f6;color:#6b7280}
-.match-teams{font-size:13px;font-weight:700;flex:1}
+.match-main{flex:1;display:flex;flex-direction:column;gap:2px}
+.match-teams{font-size:13px;font-weight:700}
+.match-time{font-size:10px;font-weight:600;color:#6b7280}
 .match-score{font-size:13px;font-weight:900;color:var(--text);white-space:nowrap}
 .wc-loading{color:var(--muted);font-size:13px;font-style:italic;padding:8px 0}
 
@@ -219,20 +210,10 @@ body{
 .meal-day{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;
   letter-spacing:.06em;width:28px;flex-shrink:0}
 .meal-row.today-row .meal-day{color:var(--house);font-size:12px}
-.meal-input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:14px;
-  font-weight:600;color:var(--text);background:transparent;min-width:0;
-  border-bottom:1px dashed transparent;transition:border-color .15s;padding:2px 4px;border-radius:6px}
-.meal-input:focus{background:var(--meals-bg,#fdf2f8);border-bottom-color:var(--meals);outline:none;
-  box-shadow:0 0 0 2px rgba(219,39,119,.08)}
-.meal-input::placeholder{color:#cbd5e1}
-.meals-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.btn{padding:8px 16px;border-radius:var(--r-pill);font-family:'Nunito',sans-serif;font-size:13px;
-  font-weight:800;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
-.btn-save{background:linear-gradient(135deg,#f9a8d4,#db2777);color:#fff;box-shadow:0 3px 10px var(--meals-shadow)}
-.btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 16px var(--meals-shadow)}
-.btn-share{background:var(--bg);color:var(--meals);border:2px solid #fbcfe8}
-.btn-share:hover{background:#fdf2f8}
-.share-msg{font-size:12px;color:var(--muted);margin-top:8px;font-weight:600;display:none}
+.meal-name{flex:1;font-size:14px;font-weight:600;color:var(--text);min-width:0;padding:2px 4px}
+.meal-link{color:var(--meals);text-decoration:none;border-bottom:1px dashed var(--meals)}
+.meal-link:hover{color:#9d174d;border-bottom-style:solid}
+.meal-empty{flex:1;font-size:14px;font-weight:600;color:#cbd5e1;padding:2px 4px}
 
 /* ═══ EMAILS ═══ */
 .c-emails{grid-area:emails}
@@ -299,7 +280,15 @@ const D = {
     {from:"OC Soccer Club", subj:"OCSC vs. Miami FC | 4:00pm Kickoff", snip:"Where to watch today's match — 4:00pm PT kickoff.", unread:true},
     {from:"Touch N Go Soccer", subj:"Registration Extended! July Summer League", snip:"Not too late to join the July Summer League — full 12-week season.", unread:true},
   ],
-  meals_default: ["","","","","","Pasta salad for soccer party 🏆",""],
+  meals: [
+    {day:"MON", name:"", recipe:""},
+    {day:"TUE", name:"Slow Cooker Salsa Chicken", recipe:"https://www.skinnytaste.com/slow-cooker-salsa-chicken-with-black-beans-and-corn/"},
+    {day:"WED", name:"Egg Salad Sandwiches", recipe:""},
+    {day:"THU", name:"Chicken Shwarma Sheet Meal", recipe:"https://www.skinnytaste.com/chicken-shawarma-sheet-pan-dinner/"},
+    {day:"FRI", name:"Movie Night: Pizza", recipe:""},
+    {day:"SAT", name:"", recipe:""},
+    {day:"SUN", name:"", recipe:""},
+  ],
 };
 // DATA_END
 </script>
@@ -309,8 +298,7 @@ const D = {
   <div class="hdr-inner">
     <div class="hdr-left">
       <div class="hdr-emoji">🏡</div>
-      <div class="hdr-title">Lam Fam</div>
-      <div class="hdr-sub">Irvine, CA · Family Dashboard</div>
+      <div class="hdr-title">Lam Fam Dashboard</div>
       <div class="hdr-badges">
         <div class="hdr-badge"><span class="dot"></span> Live</div>
         <div class="hdr-badge" id="updatedBadge">Updated <span id="upd"></span></div>
@@ -319,6 +307,9 @@ const D = {
     <div class="hdr-right">
       <div class="hdr-date" id="hdrDate"></div>
       <div class="hdr-time" id="hdrTime"></div>
+      <div class="hdr-wx" id="hdrWx" onclick="loadWeather()" title="Irvine 92604 · tap to refresh">
+        <span class="wx-sub">Loading weather…</span>
+      </div>
     </div>
   </div>
 </div>
@@ -329,28 +320,12 @@ const D = {
     <span class="links-label">🔗 Links</span>
     <a class="link-pill henry soon" title="Coming soon">⚽ Henry's Soccer Hub</a>
     <a class="link-pill ripley soon" title="Coming soon">🏕️ Summer Camp Guide</a>
-    <a class="link-pill house soon" title="Coming soon">🏫 Eastshore Elementary</a>
-    <a class="link-pill soon" title="Coming soon">💊 Henry's Concerta Tracker</a>
-    <a class="link-pill soon" title="Coming soon">🎮 Scopely Schedules</a>
-    <a class="link-pill soon" title="Coming soon">🛒 Grocery List</a>
-    <a class="link-pill soon" title="Coming soon">📋 Family To-Dos</a>
+    <a class="link-pill house" href="grocery.html" title="Grocery list from this week's recipes">🛒 Grocery List</a>
   </div>
 </div>
 
 <!-- ══════════ MAIN GRID ══════════ -->
 <div class="main">
-
-  <!-- WEATHER -->
-  <div class="card c-weather">
-    <div class="card-hdr">
-      <div class="card-icon">🌤️</div>
-      <div class="card-title">Weather · Irvine 92604</div>
-      <button class="refresh-btn" onclick="loadWeather()">↻ Refresh</button>
-    </div>
-    <div class="card-body" id="wx-body">
-      <div class="wx-loading wc-loading">Loading live weather…</div>
-    </div>
-  </div>
 
   <!-- TODAY -->
   <div class="card c-today">
@@ -404,11 +379,6 @@ const D = {
     </div>
     <div class="card-body">
       <div id="meals-body"></div>
-      <div class="meals-actions">
-        <button class="btn btn-save" onclick="saveMeals()">💾 Save meals</button>
-        <button class="btn btn-share" onclick="shareMeals()">🔗 Share with Kevin</button>
-      </div>
-      <div class="share-msg" id="share-msg"></div>
     </div>
   </div>
 
@@ -504,56 +474,29 @@ renderReminders();
   document.getElementById('week-grid').innerHTML=h;
 })();
 
-// ── MEAL PLAN (localStorage + URL import) ──
-var MEALS_KEY='lam_meals_v2';
+// ── MEAL PLAN (driven off the "Meal Planning" Google Calendar, baked daily) ──
 var DAYS=['MON','TUE','WED','THU','FRI','SAT','SUN'];
 var todayDow=new Date().toLocaleDateString('en-US',{timeZone:'America/Los_Angeles',weekday:'short'}).toUpperCase().slice(0,3);
-// Check URL for shared meal data
-(function(){
-  try{
-    var params=new URLSearchParams(window.location.search);
-    var shared=params.get('meals');
-    if(shared){
-      var data=JSON.parse(atob(shared));
-      localStorage.setItem(MEALS_KEY,JSON.stringify(data));
-      history.replaceState({},'',window.location.pathname); // clean URL
-    }
-  }catch(e){}
-})();
-function getMeals(){
-  var saved=localStorage.getItem(MEALS_KEY);
-  if(saved){try{return JSON.parse(saved);}catch(e){}}
-  return D.meals_default||['','','','','','',''];
-}
+function escHtml(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function renderMeals(){
-  var meals=getMeals();
+  var byDay={};
+  (D.meals||[]).forEach(function(m){if(m&&m.day)byDay[String(m.day).toUpperCase().slice(0,3)]=m;});
   var h='';
-  DAYS.forEach(function(d,i){
+  DAYS.forEach(function(d){
+    var m=byDay[d]||{};
+    var name=(m.name||'').trim();
     var isToday=(d===todayDow);
-    h+=`<div class="meal-row ${isToday?'today-row':''}">
-      <div class="meal-day">${d}</div>
-      <input class="meal-input" id="meal_${i}" value="${(meals[i]||'').replace(/"/g,'&quot;')}"
-        placeholder="${isToday?'What\'s for dinner tonight?':'Add meal…'}">
-    </div>`;
+    var cell;
+    if(!name){
+      cell='<span class="meal-empty">—</span>';
+    }else if(m.recipe){
+      cell='<a class="meal-name meal-link" href="'+escHtml(m.recipe)+'" target="_blank" rel="noopener">'+escHtml(name)+' ↗</a>';
+    }else{
+      cell='<span class="meal-name">'+escHtml(name)+'</span>';
+    }
+    h+='<div class="meal-row '+(isToday?'today-row':'')+'"><div class="meal-day">'+d+'</div>'+cell+'</div>';
   });
   document.getElementById('meals-body').innerHTML=h;
-}
-function saveMeals(){
-  var meals=DAYS.map(function(_,i){return(document.getElementById('meal_'+i)||{}).value||'';});
-  localStorage.setItem(MEALS_KEY,JSON.stringify(meals));
-  var btn=document.querySelector('.btn-save');
-  btn.textContent='✅ Saved!';setTimeout(function(){btn.innerHTML='💾 Save meals';},1800);
-}
-function shareMeals(){
-  saveMeals();
-  var meals=getMeals();
-  var b64=btoa(JSON.stringify(meals));
-  var url=window.location.origin+window.location.pathname+'?meals='+b64;
-  if(navigator.clipboard){navigator.clipboard.writeText(url);}
-  var msg=document.getElementById('share-msg');
-  msg.style.display='block';
-  msg.textContent='📋 Link copied! Text it to Kevin — when he opens it, his meal plan will sync.';
-  setTimeout(function(){msg.style.display='none';},6000);
 }
 renderMeals();
 
@@ -585,7 +528,9 @@ function wxIcon(desc){
   return'🌡️';
 }
 function loadWeather(){
-  document.getElementById('wx-body').innerHTML='<div class="wc-loading">Fetching live weather…</div>';
+  var el=document.getElementById('hdrWx');
+  if(!el)return;
+  el.innerHTML='<span class="wx-sub">Loading weather…</span>';
   fetch('https://wttr.in/Irvine+CA?format=j1')
     .then(function(r){return r.json();})
     .then(function(data){
@@ -596,24 +541,15 @@ function loadWeather(){
       var temp=c.temp_F;
       var hi=w.maxtempF;
       var lo=w.mintempF;
-      var hum=c.humidity;
-      var wind=c.windspeedMiles;
-      document.getElementById('wx-body').innerHTML=`
-        <div class="wx-hero">
-          <div style="font-size:60px;animation:float 4s ease-in-out infinite">${icon}</div>
-          <div class="wx-right">
-            <div class="wx-temp">${temp}<sup>°F</sup></div>
-            <div class="wx-desc">${desc} · Hi ${hi}° / Lo ${lo}°</div>
-          </div>
-        </div>
-        <div class="wx-pills">
-          <span class="wx-pill">💨 ${wind} mph wind</span>
-          <span class="wx-pill">💧 ${hum}% humidity</span>
-          <span class="wx-pill">📍 Irvine 92604</span>
-        </div>`;
+      el.title=`${desc} · Irvine 92604 · ${c.humidity}% humidity · ${c.windspeedMiles} mph wind · tap to refresh`;
+      el.innerHTML=`
+        <span class="wx-ic">${icon}</span>
+        <span class="wx-t">${temp}°</span>
+        <span class="wx-sub">H${hi}° / L${lo}°</span>`;
     })
     .catch(function(){
-      document.getElementById('wx-body').innerHTML='<div class="wx-error">⚠️ Couldn\'t load live weather. Check your connection.</div>';
+      el.title='Tap to retry';
+      el.innerHTML='<span class="wx-sub">⚠️ Weather unavailable</span>';
     });
 }
 loadWeather();
@@ -657,15 +593,23 @@ function loadWC(){
           var stType=(status.type||{});
           var isLive=stType.state==='in';
           var isFinal=stType.state==='post';
-          var timeStr=stType.shortDetail||'';
+          // Scheduled kickoff time in Pacific, e.g. "12:00 pm" — always available
+          var koDate=ev.date||comp.date;
+          var ko=koDate?new Date(koDate).toLocaleTimeString('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',minute:'2-digit',hour12:true}).toLowerCase():'';
+          ko=ko||stType.shortDetail||'';
           var badgeCls=isLive?'live':isFinal?'final':'';
           var scorePart='';
           if(isLive||isFinal){
             scorePart=`<div class="match-score">${home.score||0} – ${away.score||0}</div>`;
           }
+          // For live/finished games the badge shows status, so surface the scheduled time below the teams
+          var koLabel=(isLive||isFinal)&&ko?`<div class="match-time">🕐 ${ko} kickoff</div>`:'';
           h+=`<div class="match">
-            <div class="match-badge ${badgeCls}">${isLive?'🔴 LIVE':isFinal?'FT':timeStr}</div>
-            <div class="match-teams">${(home.team||{}).shortDisplayName||'?'} vs ${(away.team||{}).shortDisplayName||'?'}</div>
+            <div class="match-badge ${badgeCls}">${isLive?'🔴 LIVE':isFinal?'FT':ko}</div>
+            <div class="match-main">
+              <div class="match-teams">${(home.team||{}).shortDisplayName||'?'} vs ${(away.team||{}).shortDisplayName||'?'}</div>
+              ${koLabel}
+            </div>
             ${scorePart}
           </div>`;
         });
