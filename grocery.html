@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛒 Lam Fam Grocery List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5ff;--surface:#fff;--text:#1e1b2e;--muted:#6b7280;--border:#eceaf5;
+  --grocery:#16a34a;--grocery-dark:#15803d;--grocery-bg:#f0fdf4;--grocery-mid:#bbf7d0;
+  --house:#7c3aed;--r:20px;--r-pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;padding-bottom:48px}
+
+/* ═══ HEADER ═══ */
+.header{background:linear-gradient(135deg,#14532d 0%,#166534 40%,#15803d 70%,#16a34a 100%);
+  padding:24px 20px 20px;position:relative;overflow:hidden}
+.header::after{content:'🛒';position:absolute;right:18px;top:14px;font-size:42px;opacity:.18;transform:rotate(-8deg)}
+.hdr-inner{max-width:760px;margin:0 auto;position:relative;z-index:1}
+.hdr-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;
+  color:rgba(255,255,255,.85);text-decoration:none;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.hdr-back:hover{color:#fff}
+.hdr-title{font-size:clamp(26px,6vw,42px);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1}
+.hdr-sub{font-size:14px;color:rgba(255,255,255,.7);margin-top:5px;font-weight:600}
+.hdr-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hdr-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r-pill);
+  font-size:12px;font-weight:700;background:rgba(255,255,255,.15);color:rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(4px)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 0}
+
+/* ═══ SOURCE / NOTES ═══ */
+.src-card{background:var(--surface);border-radius:var(--r);padding:16px 18px;margin-bottom:18px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05),0 8px 30px rgba(0,0,0,.06)}
+.src-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px}
+.src-meal{display:flex;align-items:baseline;gap:8px;padding:5px 0;font-size:14px;font-weight:700}
+.src-meal .day{font-size:11px;font-weight:800;color:var(--grocery-dark);text-transform:uppercase;min-width:54px}
+.src-meal a{color:var(--grocery-dark);text-decoration:none;border-bottom:1px dashed var(--grocery)}
+.src-meal a:hover{border-bottom-style:solid}
+.src-note{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);line-height:1.5}
+.src-note b{color:var(--text)}
+
+/* ═══ PROGRESS ═══ */
+.progress-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.progress-track{flex:1;height:9px;background:var(--grocery-mid);border-radius:var(--r-pill);overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#4ade80,#16a34a);width:0;transition:width .3s ease;border-radius:var(--r-pill)}
+.progress-txt{font-size:12px;font-weight:800;color:var(--grocery-dark);white-space:nowrap;min-width:74px;text-align:right}
+.clear-btn{background:none;border:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;
+  color:var(--muted);cursor:pointer;text-decoration:underline;padding:4px}
+.clear-btn:hover{color:var(--text)}
+
+/* ═══ AISLES ═══ */
+.aisle{background:var(--surface);border-radius:var(--r);margin-bottom:14px;overflow:hidden;
+  box-shadow:0 2px 6px rgba(0,0,0,.05),0 8px 30px rgba(0,0,0,.06)}
+.aisle-hdr{padding:13px 18px;background:linear-gradient(135deg,var(--grocery-mid),var(--grocery-bg));
+  font-size:13px;font-weight:900;letter-spacing:.02em;color:var(--grocery-dark);display:flex;align-items:center;justify-content:space-between}
+.aisle-hdr .cnt{font-size:11px;font-weight:800;color:var(--grocery);opacity:.7}
+.aisle-body{padding:6px 18px 12px}
+.item{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.item:last-child{border-bottom:none}
+.item .box{width:21px;height:21px;border-radius:7px;border:2px solid var(--grocery-mid);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;transition:all .15s;margin-top:1px}
+.item.checked .box{background:var(--grocery);border-color:var(--grocery)}
+.item .label{flex:1;font-size:14.5px;font-weight:700;line-height:1.35;transition:color .15s}
+.item .qty{font-weight:800;color:var(--grocery-dark)}
+.item .opt{font-size:11px;font-weight:700;color:var(--muted);font-style:italic}
+.guess{font-size:10px;font-weight:800;color:#b45309;background:#fef3c7;border:1px solid #fde68a;padding:1px 7px;border-radius:var(--r-pill);vertical-align:middle;letter-spacing:.02em}
+.src-tag{font-size:11px;font-weight:800;color:#b45309;font-style:italic}
+.item.checked .label{color:#bcc2cc;text-decoration:line-through}
+.item.checked .qty{color:#bcc2cc}
+.foot{text-align:center;font-size:12px;color:var(--muted);font-weight:600;margin-top:18px}
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="header">
+  <div class="hdr-inner">
+    <a class="hdr-back" href="index.html">← Back to dashboard</a>
+    <div class="hdr-title">🛒 Grocery List</div>
+    <div class="hdr-sub">Auto-built from the next 7 days of meal-plan recipes</div>
+    <div class="hdr-meta">
+      <div class="hdr-badge">📅 <span id="g-updated"></span></div>
+      <div class="hdr-badge" id="g-itemcount"></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- SOURCE MEALS + NOTES -->
+  <div class="src-card">
+    <div class="src-title">📖 Recipes in this list</div>
+    <div id="src-meals"></div>
+    <div class="src-note" id="src-note"></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar">
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    <div class="progress-txt" id="prog-txt">0 / 0</div>
+    <button class="clear-btn" onclick="clearChecks()">Reset</button>
+  </div>
+
+  <!-- AISLES -->
+  <div id="aisles"></div>
+
+  <div class="foot">Lam Fam · grocery list regenerates with the meal plan</div>
+</div>
+
+<script>
+// GROCERY_START
+const G = {
+  updated: "Wed Jun 24, 11:30 AM",
+  source_meals: [
+    {name:"Chicken Shwarma Sheet Meal", day:"Thu Jun 25", servings:"4", recipe:"https://www.skinnytaste.com/chicken-shawarma-sheet-pan-dinner/"},
+    {name:"Egg Salad Sandwiches", day:"Wed Jun 24", inferred:true},
+  ],
+  skipped: [
+    {name:"Movie Night: Pizza", day:"Fri Jun 26"},
+  ],
+  aisles: [
+    {name:"🥬 Produce", items:[
+      {item:"Red onion", qty:"1 small"},
+      {item:"Red bell pepper", qty:"1"},
+      {item:"Carrots", qty:"2"},
+      {item:"Celery", qty:"1 bunch", guess:true},
+      {item:"Green onions", qty:"1 bunch", guess:true, optional:true},
+    ]},
+    {name:"🍗 Meat & Protein", items:[
+      {item:"Boneless skinless chicken thighs", qty:"1½ lb"},
+    ]},
+    {name:"🥫 Canned & Pantry", items:[
+      {item:"Chickpeas", qty:"15 oz can"},
+      {item:"Extra virgin olive oil", qty:"1 tbsp"},
+    ]},
+    {name:"🍞 Bakery", items:[
+      {item:"Sandwich bread", qty:"1 loaf", guess:true},
+    ]},
+    {name:"🧀 Dairy & Condiments", items:[
+      {item:"Eggs", qty:"1 dozen", guess:true},
+      {item:"Mayonnaise", qty:"", guess:true},
+      {item:"Dijon mustard", qty:"", guess:true, optional:true},
+      {item:"Tzatziki or white sauce", qty:"", optional:true},
+    ]},
+    {name:"🧂 Spices & Seasoning", items:[
+      {item:"Smoked paprika", qty:"1½ tsp"},
+      {item:"Ground cumin", qty:"1½ tsp"},
+      {item:"Garlic powder", qty:"¾ tsp"},
+      {item:"Onion powder", qty:"¾ tsp"},
+      {item:"Dried oregano", qty:"¾ tsp"},
+      {item:"Ground cinnamon", qty:"½ tsp"},
+      {item:"Kosher salt", qty:"1½ tsp"},
+      {item:"Black pepper", qty:"", guess:true, optional:true},
+      {item:"Red pepper flakes", qty:"½ tsp", optional:true},
+    ]},
+  ],
+};
+// GROCERY_END
+
+function escHtml(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+// Storage namespaced by the list contents so a new week's list starts fresh
+var allItems=[];
+G.aisles.forEach(function(a){a.items.forEach(function(it){allItems.push(it.item);});});
+var listId='lam_grocery_'+Math.abs(allItems.join('|').split('').reduce(function(h,c){return((h<<5)-h+c.charCodeAt(0))|0;},0));
+function loadChecks(){try{return JSON.parse(localStorage.getItem(listId))||{};}catch(e){return{};}}
+function saveChecks(c){try{localStorage.setItem(listId,JSON.stringify(c));}catch(e){}}
+var checks=loadChecks();
+
+function render(){
+  document.getElementById('g-updated').textContent=G.updated;
+  document.getElementById('g-itemcount').textContent='🧾 '+allItems.length+' items';
+
+  // Source meals (recipe-sourced show a link + servings; inferred show an "estimated" tag)
+  var sm=G.source_meals.map(function(m){
+    var nm=m.recipe?'<a href="'+escHtml(m.recipe)+'" target="_blank" rel="noopener">'+escHtml(m.name)+' ↗</a>':escHtml(m.name);
+    var tag=m.recipe?(m.servings?' · serves '+escHtml(m.servings):'')
+                    :(m.inferred?' <span class="src-tag">≈ estimated</span>':'');
+    return '<div class="src-meal"><span class="day">'+escHtml(m.day)+'</span><span>'+nm+tag+'</span></div>';
+  }).join('');
+  document.getElementById('src-meals').innerHTML=sm||'<div class="src-meal"><span>No meals to shop for in the next 7 days.</span></div>';
+
+  // Notes: skipped movie nights + a heads-up about estimated items
+  var notes=[];
+  if(G.skipped&&G.skipped.length){
+    var sk=G.skipped.map(function(m){return '<b>'+escHtml(m.name)+'</b> ('+escHtml(m.day)+')';}).join(', ');
+    notes.push('🍽️ Skipped (no shopping needed): '+sk+'.');
+  }
+  var hasGuess=G.aisles.some(function(a){return a.items.some(function(it){return it.guess;});});
+  if(hasGuess){notes.push('Items tagged <span class="guess">guess</span> were smart-estimated for meals without a recipe link — double-check them.');}
+  var noteEl=document.getElementById('src-note');
+  if(notes.length){noteEl.innerHTML=notes.join('<br>');}else{noteEl.style.display='none';}
+
+  // Aisles
+  var h='';
+  G.aisles.forEach(function(a){
+    if(!a.items.length)return;
+    h+='<div class="aisle"><div class="aisle-hdr"><span>'+escHtml(a.name)+'</span><span class="cnt">'+a.items.length+'</span></div><div class="aisle-body">';
+    a.items.forEach(function(it){
+      var key=it.item;
+      var on=!!checks[key];
+      var qty=it.qty?'<span class="qty">'+escHtml(it.qty)+'</span> ':'';
+      var opt=it.optional?' <span class="opt">optional</span>':'';
+      var gs=it.guess?' <span class="guess">guess</span>':'';
+      h+='<div class="item'+(on?' checked':'')+'" data-key="'+escHtml(key)+'">'
+        +'<div class="box">'+(on?'✓':'')+'</div>'
+        +'<div class="label">'+qty+escHtml(it.item)+opt+gs+'</div></div>';
+    });
+    h+='</div></div>';
+  });
+  document.getElementById('aisles').innerHTML=h;
+
+  document.querySelectorAll('.item').forEach(function(el){
+    el.addEventListener('click',function(){toggle(el);});
+  });
+  updateProgress();
+}
+
+function toggle(el){
+  var key=el.getAttribute('data-key');
+  var on=!checks[key];
+  if(on){checks[key]=1;el.classList.add('checked');el.querySelector('.box').textContent='✓';}
+  else{delete checks[key];el.classList.remove('checked');el.querySelector('.box').textContent='';}
+  saveChecks(checks);
+  updateProgress();
+}
+
+function updateProgress(){
+  var total=allItems.length;
+  var done=allItems.filter(function(i){return checks[i];}).length;
+  var pct=total?Math.round(done/total*100):0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-txt').textContent=done+' / '+total;
+}
+
+function clearChecks(){
+  checks={};saveChecks(checks);
+  document.querySelectorAll('.item').forEach(function(el){el.classList.remove('checked');el.querySelector('.box').textContent='';});
+  updateProgress();
+}
+
+render();
+</script>
+</body>
+</html>
