@@ -588,7 +588,7 @@ renderReminders();
   document.getElementById('week-grid').innerHTML=h;
 })();
 
-// ── MEAL PLAN (driven off the "Meal Planning" Google Calendar, baked daily) ──
+// ── MEAL PLAN (live from the Lam Fam Meals app / Supabase; baked D.meals is the instant first paint + offline fallback) ──
 var DAYS=['MON','TUE','WED','THU','FRI','SAT','SUN'];
 var todayDow=new Date().toLocaleDateString('en-US',{timeZone:'America/Los_Angeles',weekday:'short'}).toUpperCase().slice(0,3);
 function escHtml(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -612,7 +612,36 @@ function renderMeals(){
   });
   document.getElementById('meals-body').innerHTML=h;
 }
-renderMeals();
+renderMeals(); // instant paint from baked fallback
+
+// Upgrade to live meal plan from the Lam Fam Meals app (Supabase) for the current Mon–Sun week.
+(function(){
+  var SUPA_URL='https://pjlvmxegxolnsgltksjm.supabase.co';
+  var SUPA_KEY='sb_publishable_3xXtbwM_O3Q9LZ3PMYUeLA_o_vtwVzG'; // publishable (anon) key — safe to expose; reads the public dashboard_meals view only
+  // Current week's Mon..Sun, anchored to today's America/Los_Angeles calendar date.
+  var todayStr=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles'}).format(new Date()); // YYYY-MM-DD
+  var base=new Date(todayStr+'T12:00:00Z');
+  var mon=new Date(base); mon.setUTCDate(base.getUTCDate()-((base.getUTCDay()+6)%7));
+  var sun=new Date(mon); sun.setUTCDate(mon.getUTCDate()+6);
+  var ymd=function(dt){return dt.toISOString().slice(0,10);};
+  var DOW=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  var url=SUPA_URL+'/rest/v1/dashboard_meals?select=plan_date,meal_type,recipe_title,recipe_url'
+    +'&plan_date=gte.'+ymd(mon)+'&plan_date=lte.'+ymd(sun)+'&order=plan_date';
+  fetch(url,{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}})
+    .then(function(r){return r.ok?r.json():Promise.reject('HTTP '+r.status);})
+    .then(function(rows){
+      if(!Array.isArray(rows)||!rows.length) return; // nothing planned yet → keep baked fallback
+      D.meals=rows.map(function(row){
+        var day=DOW[new Date(row.plan_date+'T12:00:00Z').getUTCDay()];
+        var name=row.meal_type==='takeout'?'Takeout'
+                :row.meal_type==='leftovers'?'Leftovers'
+                :(row.recipe_title||'');
+        return {day:day, name:name, recipe:row.recipe_url||''};
+      });
+      renderMeals();
+    })
+    .catch(function(e){ console.warn('Live meal plan fetch failed; showing baked fallback.', e); });
+})();
 
 // ── EMAILS ──
 (function(){
