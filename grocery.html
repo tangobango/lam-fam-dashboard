@@ -116,10 +116,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 <script>
 // GROCERY_START
 const G = {
-  updated: "Wed Jun 24, 4:20 PM",
+  updated: "Thu Jun 25, 7:02 AM",
   source_meals: [
     {name:"Chicken Shwarma Sheet Meal", day:"Thu Jun 25", servings:"4", recipe:"https://www.skinnytaste.com/chicken-shawarma-sheet-pan-dinner/"},
-    {name:"Egg Salad Sandwiches", day:"Wed Jun 24", inferred:true},
   ],
   skipped: [
     {name:"Movie Night: Pizza", day:"Fri Jun 26"},
@@ -129,8 +128,6 @@ const G = {
       {item:"Red onion", qty:"1 small"},
       {item:"Red bell pepper", qty:"1"},
       {item:"Carrots", qty:"2"},
-      {item:"Celery", qty:"1 bunch", guess:true, from:"Egg Salad Sandwiches"},
-      {item:"Green onions", qty:"1 bunch", guess:true, optional:true, from:"Egg Salad Sandwiches"},
     ]},
     {name:"🍗 Meat & Protein", items:[
       {item:"Boneless skinless chicken thighs", qty:"1½ lb"},
@@ -139,19 +136,13 @@ const G = {
       {item:"Chickpeas", qty:"15 oz can"},
       {item:"Extra virgin olive oil", qty:"1 tbsp"},
     ]},
-    {name:"🍞 Bakery", items:[
-      {item:"Sandwich bread", qty:"1 loaf", guess:true, from:"Egg Salad Sandwiches"},
-    ]},
-    {name:"🧀 Dairy & Condiments", items:[
-      {item:"Eggs", qty:"1 dozen", guess:true, from:"Egg Salad Sandwiches"},
-      {item:"Mayonnaise", qty:"", guess:true, from:"Egg Salad Sandwiches"},
-      {item:"Dijon mustard", qty:"", guess:true, optional:true, from:"Egg Salad Sandwiches"},
-      {item:"Tzatziki or white sauce", qty:"", optional:true},
-    ]},
     {name:"🧂 Spices & Seasoning", items:[
       {item:"Smoked paprika", qty:"1½ tsp"},
       {item:"Dried oregano", qty:"¾ tsp"},
       {item:"Red pepper flakes", qty:"½ tsp", optional:true},
+    ]},
+    {name:"🧀 Dairy & Condiments", items:[
+      {item:"Tzatziki or white sauce", qty:"", optional:true},
     ]},
   ],
 };
