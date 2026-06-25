@@ -28,16 +28,18 @@ body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:va
 .wrap{max-width:980px;margin:0 auto;padding:18px 16px 0;display:grid;grid-template-columns:1.45fr .95fr;gap:16px;align-items:start}
 @media(max-width:820px){.wrap{grid-template-columns:1fr}}
 .panel{background:var(--surface);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 8px rgba(20,50,38,.06),0 12px 34px rgba(20,50,38,.08)}
+.today-panel{grid-column:1/-1}
 .panel-hdr{display:flex;align-items:center;gap:10px;padding:14px 18px;background:linear-gradient(135deg,var(--green-mid),var(--green-bg));border-bottom:1px solid var(--border)}
 .panel-icon{width:34px;height:34px;border-radius:10px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:18px}
 .panel-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--green-dark);flex:1}
 .panel-body{padding:12px 18px 16px}
-.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-@media(max-width:560px){.summary{grid-template-columns:1fr}}
-.stat{background:var(--surface);border-radius:var(--r-sm);padding:13px 14px;border:1px solid var(--border);box-shadow:0 3px 14px rgba(20,50,38,.05)}
-.stat-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.stat-value{font-size:22px;font-weight:900;margin-top:3px;color:var(--green-dark)}
-.stat-note{font-size:12px;color:var(--muted);font-weight:700;margin-top:1px}
+.today-events{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.today-card{border:1px solid var(--border);border-radius:16px;padding:12px 14px;background:#fff;display:flex;align-items:center;gap:12px}
+.today-card-main{min-width:0;flex:1}
+.today-card-title{font-size:15px;font-weight:900;line-height:1.25}
+.today-card-meta{font-size:12px;color:var(--muted);font-weight:800;margin-top:4px}
+.today-card .tag{margin-top:9px;display:inline-flex}
+.event-logo.today-card-logo{width:58px;height:58px;object-fit:contain;flex:0 0 auto;margin-left:auto}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .filter{border:1px solid var(--border);background:#fff;border-radius:var(--r-pill);padding:7px 12px;font-family:inherit;font-size:12px;font-weight:900;color:var(--muted);cursor:pointer}
 .filter.active{background:var(--green);border-color:var(--green);color:#fff}
@@ -47,9 +49,10 @@ body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:va
 .datebox .mon{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
 .datebox .day{font-size:22px;font-weight:900;line-height:1}
 .event-top{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
-.event-name{font-size:15px;font-weight:900;line-height:1.25}
+.event-name{font-size:15px;font-weight:900;line-height:1.25;display:flex;align-items:center;gap:7px}
 .event-link,.tourney-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentColor}
 .event-link:hover,.tourney-link:hover{border-bottom-style:solid}
+.event-logo{width:24px;height:24px;object-fit:contain;flex:0 0 auto}
 .event-time,.event-loc{font-size:12px;color:var(--muted);font-weight:700;margin-top:3px}
 .event-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .tag{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;border-radius:var(--r-pill);padding:3px 8px}
@@ -59,7 +62,7 @@ body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:va
 .tag.lesson{background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe}
 .tag.other{background:#f8fafc;color:#475569;border:1px solid #e2e8f0}
 .tourney{border:1px solid var(--border);border-radius:16px;padding:13px 14px;margin-bottom:10px;background:#fff}
-.tourney-name{font-size:15px;font-weight:900}
+.tourney-name{font-size:15px;font-weight:900;display:flex;align-items:center;gap:7px}
 .tourney-meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
 .hotel{margin-top:10px;padding:9px 10px;border-radius:12px;font-size:12px;font-weight:800}
 .hotel.yes{background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-mid)}
@@ -84,13 +87,17 @@ body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:va
 </div>
 
 <main class="wrap">
-  <section>
-    <div class="summary">
-      <div class="stat"><div class="stat-label">Upcoming</div><div class="stat-value" id="stat-total">0</div><div class="stat-note">soccer events</div></div>
-      <div class="stat"><div class="stat-label">Next Up</div><div class="stat-value" id="stat-next">—</div><div class="stat-note" id="stat-next-note">No event yet</div></div>
-      <div class="stat"><div class="stat-label">Tournaments</div><div class="stat-value" id="stat-tourneys">0</div><div class="stat-note">next 12 months</div></div>
+  <section class="panel today-panel">
+    <div class="panel-hdr">
+      <div class="panel-icon">⚽</div>
+      <div class="panel-title">Today's Soccer Events</div>
     </div>
+    <div class="panel-body">
+      <div class="today-events" id="today-soccer-list"></div>
+    </div>
+  </section>
 
+  <section>
     <div class="panel">
       <div class="panel-hdr">
         <div class="panel-icon">📆</div>
@@ -120,49 +127,22 @@ body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:va
 <script>
 // SOCCER_DATA_START
 const S = {
-  updated: "Wed Jun 24, 4:20 PM",
-  range: "Next 90 days",
+  updated: "Wed Jun 24, 4:45 PM",
+  range: "Next 3 weeks",
   source_calendar: "Henry Calendar",
   events: [
+    {id:"c61i743jn9io561jfk4i0dgutk-2026-06-24", title:"GDP Elite Summer Camp", type:"training", date:"2026-06-24", day:"Wed Jun 24", time:"All day", location:"", notes:"", url:"https://www.google.com/calendar/event?eid=YzYxaTc0M2puOWlvNTYxamZrNGkwZGd1dGsgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
+    {id:"c61i743jn9io561jfk4i0dgutk-2026-06-25", title:"GDP Elite Summer Camp", type:"training", date:"2026-06-25", day:"Thu Jun 25", time:"All day", location:"", notes:"", url:"https://www.google.com/calendar/event?eid=YzYxaTc0M2puOWlvNTYxamZrNGkwZGd1dGsgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
+    {id:"c61i743jn9io561jfk4i0dgutk-2026-06-26", title:"GDP Elite Summer Camp", type:"training", date:"2026-06-26", day:"Fri Jun 26", time:"All day", location:"", notes:"", url:"https://www.google.com/calendar/event?eid=YzYxaTc0M2puOWlvNTYxamZrNGkwZGd1dGsgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
     {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260706T233000Z", title:"Soccer Training", type:"training", date:"2026-07-06", day:"Mon Jul 6", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MDZUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"7ej4vcld4ha1gafgppt81aneaq", title:"Soccer Break Ends!", type:"other", date:"2026-07-06", day:"Mon Jul 6", time:"All day", location:"", notes:"", url:"https://www.google.com/calendar/event?eid=N2VqNHZjbGQ0aGExZ2FmZ3BwdDgxYW5lYXEgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
+    {id:"7ej4vcld4ha1gafgppt81aneaq-2026-07-06", title:"Soccer Break Ends!", type:"other", date:"2026-07-06", day:"Mon Jul 6", time:"All day", location:"", notes:"", url:"https://www.google.com/calendar/event?eid=N2VqNHZjbGQ0aGExZ2FmZ3BwdDgxYW5lYXEgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
     {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260708T233000Z", title:"Soccer Training", type:"training", date:"2026-07-08", day:"Wed Jul 8", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MDhUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
     {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260709T233000Z", title:"Soccer Training", type:"training", date:"2026-07-09", day:"Thu Jul 9", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MDlUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
     {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260713T233000Z", title:"Soccer Training", type:"training", date:"2026-07-13", day:"Mon Jul 13", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MTNUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
+    {id:"me6mlqp2aksvbnlv8du69lttfc_20260713T160000Z", title:"Man City Camp", type:"training", date:"2026-07-13", day:"Mon Jul 13", time:"9:00 AM", location:"Lake Forest Sports Park, 28000 Vista Terrace, Lake Forest, CA 92630, USA", notes:"", url:"https://www.google.com/calendar/event?eid=bWU2bWxxcDJha3N2Ym5sdjhkdTY5bHR0ZmNfMjAyNjA3MTNUMTYwMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
+    {id:"me6mlqp2aksvbnlv8du69lttfc_20260714T160000Z", title:"Man City Camp", type:"training", date:"2026-07-14", day:"Tue Jul 14", time:"9:00 AM", location:"Lake Forest Sports Park, 28000 Vista Terrace, Lake Forest, CA 92630, USA", notes:"", url:"https://www.google.com/calendar/event?eid=bWU2bWxxcDJha3N2Ym5sdjhkdTY5bHR0ZmNfMjAyNjA3MTRUMTYwMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
     {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260715T233000Z", title:"Soccer Training", type:"training", date:"2026-07-15", day:"Wed Jul 15", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MTVUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260716T233000Z", title:"Soccer Training", type:"training", date:"2026-07-16", day:"Thu Jul 16", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MTZUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260720T233000Z", title:"Soccer Training", type:"training", date:"2026-07-20", day:"Mon Jul 20", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MjBUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260722T233000Z", title:"Soccer Training", type:"training", date:"2026-07-22", day:"Wed Jul 22", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MjJUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260723T233000Z", title:"Soccer Training", type:"training", date:"2026-07-23", day:"Thu Jul 23", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MjNUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"53ldlp0kpeirbgobhphrk98qgm", title:"Tournament: SURF CUP", type:"tournament", date:"2026-07-25", day:"Sat Jul 25", time:"All day", location:"Oceanside, CA, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NTNsZGxwMGtwZWlyYmdvYmhwaHJrOThxZ20gdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260727T233000Z", title:"Soccer Training", type:"training", date:"2026-07-27", day:"Mon Jul 27", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MjdUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260729T233000Z", title:"Soccer Training", type:"training", date:"2026-07-29", day:"Wed Jul 29", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MjlUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260730T233000Z", title:"Soccer Training", type:"training", date:"2026-07-30", day:"Thu Jul 30", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA3MzBUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"50dpcok9v0e68tffd67ta1aj87", title:"Tournament: OCSI", type:"tournament", date:"2026-08-01", day:"Sat Aug 1", time:"All day", location:"Irvine, CA, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NTBkcGNvazl2MGU2OHRmZmQ2N3RhMWFqODcgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260803T233000Z", title:"Soccer Training", type:"training", date:"2026-08-03", day:"Mon Aug 3", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MDNUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260805T233000Z", title:"Soccer Training", type:"training", date:"2026-08-05", day:"Wed Aug 5", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MDVUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260806T233000Z", title:"Soccer Training", type:"training", date:"2026-08-06", day:"Thu Aug 6", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MDZUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"67d15vvkoam6nph7hg5duqsnj6", title:"Tournament: Copa Americana", type:"tournament", date:"2026-08-07", day:"Fri Aug 7", time:"All day", location:"Norco, CA, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NjdkMTV2dmtvYW02bnBoN2hnNWR1cXNuajYgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260810T233000Z", title:"Soccer Training", type:"training", date:"2026-08-10", day:"Mon Aug 10", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MTBUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260812T233000Z", title:"Soccer Training", type:"training", date:"2026-08-12", day:"Wed Aug 12", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MTJUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260813T233000Z", title:"Soccer Training", type:"training", date:"2026-08-13", day:"Thu Aug 13", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MTNUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260817T233000Z", title:"Soccer Training", type:"training", date:"2026-08-17", day:"Mon Aug 17", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MTdUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260819T233000Z", title:"Soccer Training", type:"training", date:"2026-08-19", day:"Wed Aug 19", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MTlUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260820T233000Z", title:"Soccer Training", type:"training", date:"2026-08-20", day:"Thu Aug 20", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MjBUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"4klrktjnafp2kpqcmvsnf2a30d", title:"Tournament: Albion Showcase", type:"tournament", date:"2026-08-22", day:"Sat Aug 22", time:"All day", location:"Galway Downs Soccer Complex, 38801 Los Corralitos Rd, Temecula, CA 92592, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NGtscmt0am5hZnAya3BxY212c25mMmEzMGQgdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260824T233000Z", title:"Soccer Training", type:"training", date:"2026-08-24", day:"Mon Aug 24", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MjRUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260826T233000Z", title:"Soccer Training", type:"training", date:"2026-08-26", day:"Wed Aug 26", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MjZUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260827T233000Z", title:"Soccer Training", type:"training", date:"2026-08-27", day:"Thu Aug 27", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MjdUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260831T233000Z", title:"Soccer Training", type:"training", date:"2026-08-31", day:"Mon Aug 31", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA4MzFUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260902T233000Z", title:"Soccer Training", type:"training", date:"2026-09-02", day:"Wed Sep 2", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MDJUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260903T233000Z", title:"Soccer Training", type:"training", date:"2026-09-03", day:"Thu Sep 3", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MDNUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260907T233000Z", title:"Soccer Training", type:"training", date:"2026-09-07", day:"Mon Sep 7", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MDdUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260909T233000Z", title:"Soccer Training", type:"training", date:"2026-09-09", day:"Wed Sep 9", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MDlUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260910T233000Z", title:"Soccer Training", type:"training", date:"2026-09-10", day:"Thu Sep 10", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MTBUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260914T233000Z", title:"Soccer Training", type:"training", date:"2026-09-14", day:"Mon Sep 14", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MTRUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260916T233000Z", title:"Soccer Training", type:"training", date:"2026-09-16", day:"Wed Sep 16", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MTZUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260917T233000Z", title:"Soccer Training", type:"training", date:"2026-09-17", day:"Thu Sep 17", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MTdUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
-    {id:"5vfe0eh496d9g4qh1nr4tluk1f_20260921T233000Z", title:"Soccer Training", type:"training", date:"2026-09-21", day:"Mon Sep 21", time:"4:30 PM", location:"Portola Springs Community Park - City of Irvine, 900 Tomato Springs, Irvine, CA 92618, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NXZmZTBlaDQ5NmQ5ZzRxaDFucjR0bHVrMWZfMjAyNjA5MjFUMjMzMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
+    {id:"me6mlqp2aksvbnlv8du69lttfc_20260715T160000Z", title:"Man City Camp", type:"training", date:"2026-07-15", day:"Wed Jul 15", time:"9:00 AM", location:"Lake Forest Sports Park, 28000 Vista Terrace, Lake Forest, CA 92630, USA", notes:"", url:"https://www.google.com/calendar/event?eid=bWU2bWxxcDJha3N2Ym5sdjhkdTY5bHR0ZmNfMjAyNjA3MTVUMTYwMDAwWiB1ZXNicjU1NDlhM2FuZG5sZDFvbm5odGVlNEBn&ctz=America/Los_Angeles"},
   ],
   tournaments: [
     {id:"53ldlp0kpeirbgobhphrk98qgm", title:"Tournament: SURF CUP", type:"tournament", date:"2026-07-25", day:"Sat Jul 25", time:"All day", location:"Oceanside, CA, USA", notes:"", url:"https://www.google.com/calendar/event?eid=NTNsZGxwMGtwZWlyYmdvYmhwaHJrOThxZ20gdWVzYnI1NTQ5YTNhbmRubGQxb25uaHRlZTRAZw&ctz=America/Los_Angeles"},
@@ -191,6 +171,52 @@ let currentFilter = "all";
 
 function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function prettyType(t){return ({training:"Training",game:"Game",tournament:"Tournament",lesson:"Lesson",other:"Soccer"})[t]||"Soccer";}
+// Add future event-logo rules here. First matching rule wins.
+const EVENT_LOGOS = [
+  {
+    src:"assets/la-galaxy-logo.png",
+    alt:"LA Galaxy",
+    matches:function(e){return /\b(GDP|LA Galaxy)\b/i.test(eventSearchText(e));}
+  },
+  {
+    src:"assets/man-city-logo.svg",
+    alt:"Manchester City",
+    matches:function(e){return /\bMan City\b/i.test(eventSearchText(e));}
+  },
+  {
+    src:"assets/touch-n-go-logo.png",
+    alt:"Touch n Go",
+    matches:function(e){return /\bTNG\b/i.test(eventSearchText(e)) || /\bTouch[\s-]*(?:&|and|n|'n)?[\s-]*Go\b/i.test(eventSearchText(e));}
+  },
+  {
+    src:"assets/socal-reds-logo.png",
+    alt:"SoCal Reds",
+    matches:function(e){
+      const title = String(e&&e.title||"").trim();
+      return (e&&e.type==="tournament") || /^Soccer Training\b/i.test(title) || /^Tournament(?:\s+Game)?\b/i.test(title);
+    }
+  }
+];
+function eventSearchText(e){
+  return [e&&e.title,e&&e.label,e&&e.notes,e&&e.location,e&&e.loc].filter(Boolean).join(" ");
+}
+function eventLogo(e){
+  for(const logo of EVENT_LOGOS){
+    if(logo.matches(e)) return logo;
+  }
+  return null;
+}
+function eventLogoHtml(e, cls){
+  const logo = eventLogo(e);
+  return logo ? '<img class="event-logo '+esc(cls||"")+'" src="'+esc(logo.src)+'" alt="'+esc(logo.alt)+'">' : '';
+}
+function linkedTitleHtml(e, linkClass){
+  const title = esc(e.title);
+  return e.url ? '<a class="'+linkClass+'" href="'+esc(e.url)+'" target="_blank" rel="noopener">'+title+' ↗</a>' : title;
+}
+function eventTitleHtml(e, linkClass){
+  return eventLogoHtml(e)+linkedTitleHtml(e, linkClass);
+}
 function monthDay(dateStr){
   const d = new Date(dateStr+"T12:00:00");
   if(isNaN(d)) return {mon:"", day:""};
@@ -210,21 +236,23 @@ function tournamentEvents(){
     return String(a.date).localeCompare(String(b.date)) || String(a.time||"").localeCompare(String(b.time||""));
   });
 }
+function todayKey(){
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone:"America/Los_Angeles",
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit"
+  }).formatToParts(new Date()).reduce(function(acc,p){acc[p.type]=p.value;return acc;},{});
+  return parts.year+"-"+parts.month+"-"+parts.day;
+}
 function filteredEvents(){
   const events = sortedEvents();
   if(currentFilter==="tournament") return tournamentEvents();
   return currentFilter==="all" ? events : events.filter(e => e.type===currentFilter);
 }
-function renderStats(){
-  const events = sortedEvents();
-  const tourneys = tournamentEvents();
-  const next = events[0];
+function renderHeaderMeta(){
   document.getElementById("s-range").textContent = S.range || "Upcoming";
   document.getElementById("s-updated").textContent = S.updated || "";
-  document.getElementById("stat-total").textContent = events.length;
-  document.getElementById("stat-tourneys").textContent = tourneys.length;
-  document.getElementById("stat-next").textContent = next ? monthDay(next.date).mon+" "+monthDay(next.date).day : "—";
-  document.getElementById("stat-next-note").textContent = next ? next.title : "No event yet";
 }
 function renderFilters(){
   document.getElementById("filters").innerHTML = TYPES.map(function(t){
@@ -237,6 +265,27 @@ function renderFilters(){
     });
   });
 }
+function renderTodaySoccer(){
+  const today = todayKey();
+  const events = sortedEvents().filter(e => e.date===today);
+  if(!events.length){
+    document.getElementById("today-soccer-list").innerHTML = '<div class="empty">No soccer events today.</div>';
+    return;
+  }
+  document.getElementById("today-soccer-list").innerHTML = events.map(function(e){
+    const titleHtml = linkedTitleHtml(e, "event-link");
+    const logoHtml = eventLogoHtml(e, "today-card-logo");
+    const loc = e.location ? '<div class="today-card-meta">📍 '+esc(e.location)+'</div>' : '';
+    return '<article class="today-card">'
+      +'<div class="today-card-main"><div class="today-card-title">'+titleHtml+'</div>'
+      +'<div class="today-card-meta">'+esc(e.time || "Time TBD")+'</div>'
+      +loc
+      +'<span class="tag '+esc(e.type||"other")+'">'+esc(prettyType(e.type))+'</span>'
+      +'</div>'
+      +logoHtml
+      +'</article>';
+  }).join("");
+}
 function renderEvents(){
   const events = filteredEvents();
   if(!events.length){
@@ -247,8 +296,7 @@ function renderEvents(){
     const md = monthDay(e.date);
     const loc = e.location ? '<div class="event-loc">📍 '+esc(e.location)+'</div>' : '';
     const notes = e.notes ? '<div class="event-loc">'+esc(e.notes)+'</div>' : '';
-    const title = esc(e.title);
-    const titleHtml = e.url ? '<a class="event-link" href="'+esc(e.url)+'" target="_blank" rel="noopener">'+title+' ↗</a>' : title;
+    const titleHtml = eventTitleHtml(e, "event-link");
     return '<article class="event">'
       +'<div class="datebox"><div class="mon">'+esc(md.mon)+'</div><div class="day">'+esc(md.day)+'</div></div>'
       +'<div><div class="event-top"><div><div class="event-name">'+titleHtml+'</div><div class="event-time">'+esc(e.day || e.date)+' · '+esc(e.time || "Time TBD")+'</div>'+loc+notes+'</div></div>'
@@ -265,8 +313,7 @@ function renderTournaments(){
   document.getElementById("tournament-list").innerHTML = tourneys.map(function(e){
     const hotel = SOCCER_HOTELS[e.id] || {status:"tbd", note:"Hotel status not set"};
     const label = hotel.status==="yes" ? "Hotel: yes" : hotel.status==="no" ? "Hotel: no" : "Hotel: TBD";
-    const title = esc(e.title);
-    const titleHtml = e.url ? '<a class="tourney-link" href="'+esc(e.url)+'" target="_blank" rel="noopener">'+title+' ↗</a>' : title;
+    const titleHtml = eventTitleHtml(e, "tourney-link");
     return '<div class="tourney">'
       +'<div class="tourney-name">'+titleHtml+'</div>'
       +'<div class="tourney-meta">'+esc(e.day || e.date)+' · '+esc(e.time || "Time TBD")+'</div>'
@@ -276,8 +323,9 @@ function renderTournaments(){
   }).join("");
 }
 function render(){
-  renderStats();
+  renderHeaderMeta();
   renderFilters();
+  renderTodaySoccer();
   renderEvents();
   renderTournaments();
 }
