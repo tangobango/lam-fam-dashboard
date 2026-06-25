@@ -83,10 +83,10 @@ body{
 /* ═══ GRID ═══ */
 .main{max-width:980px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:18px;
   grid-template-columns:1fr 1fr;
-  grid-template-areas:"today today" "remind wc" "week week" "meals emails"}
+  grid-template-areas:"brief brief" "today today" "remind wc" "week week" "meals emails"}
 @media(max-width:620px){
   .main{grid-template-columns:1fr;
-    grid-template-areas:"today""remind""wc""week""meals""emails"}}
+    grid-template-areas:"brief""today""remind""wc""week""meals""emails"}}
 
 /* ═══ CARD BASE ═══ */
 .card{background:var(--surface);border-radius:var(--r);overflow:hidden;
@@ -129,6 +129,13 @@ body{
 .c-emails .card-icon{background:#fecaca;--icon-shadow:rgba(239,68,68,.2)}
 .c-emails{box-shadow:0 2px 6px rgba(239,68,68,.15),0 8px 30px rgba(239,68,68,.08)}
 
+/* ═══ WEEK BRIEF ═══ */
+.c-brief{grid-area:brief}
+.c-brief .card-hdr{background:linear-gradient(135deg,#ede9fe,#f8fafc)}
+.c-brief .card-icon{background:#ddd6fe;--icon-shadow:var(--house-shadow)}
+.brief-text{font-size:15px;font-weight:700;line-height:1.55;color:var(--text)}
+.brief-empty{font-size:14px;font-weight:700;color:var(--muted);text-align:center;padding:8px 0}
+
 /* ═══ TODAY ═══ */
 .c-today{grid-area:today}
 .ev{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);align-items:flex-start}
@@ -139,9 +146,10 @@ body{
 .ev-bubble.ripley{background:linear-gradient(135deg,#fbbf24,#ca8a04);box-shadow:0 3px 8px var(--ripley-shadow)}
 .ev-bubble.house{background:linear-gradient(135deg,#a78bfa,#7c3aed);box-shadow:0 3px 8px var(--house-shadow)}
 .ev-info{flex:1;min-width:0}
-.ev-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
 .ev-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentColor}
 .ev-link:hover{border-bottom-style:solid}
+.event-logo{width:22px;height:22px;object-fit:contain;flex:0 0 auto}
 .ev-time{font-size:12px;color:var(--muted);margin-top:1px;font-weight:600}
 .ev-loc{font-size:11px;color:var(--muted);margin-top:1px}
 .ev-tag{display:inline-flex;padding:2px 8px;border-radius:var(--r-pill);font-size:10px;font-weight:800;
@@ -197,12 +205,13 @@ body{
 .day-num{font-size:20px;font-weight:900;margin:2px 0 6px;color:var(--text)}
 .day.today .day-num{color:var(--house)}
 .day-evs{display:flex;flex-direction:column;gap:3px}
-.day-ev{font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;line-height:1.3}
-.day-ev[href]{text-decoration:none;display:block}
+.day-ev{font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;line-height:1.3;display:flex;align-items:center;gap:4px}
+.day-ev[href]{text-decoration:none}
 .day-ev[href]:hover{filter:brightness(.96)}
 .day-ev.henry{background:var(--henry-mid);color:var(--henry-dark)}
 .day-ev.ripley{background:var(--ripley-mid);color:var(--ripley-dark)}
 .day-ev.house{background:var(--house-mid);color:var(--house-dark)}
+.day-ev .event-logo{width:14px;height:14px;margin-left:-1px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;padding:12px 18px 14px;border-top:1px solid var(--border)}
 .leg-item{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
 .leg-dot{width:10px;height:10px;border-radius:50%}
@@ -250,6 +259,7 @@ body{
 const D = {
   date: "Wednesday, June 24, 2026",
   updated: "4:20 PM",
+  week_summary: "This week is mostly about keeping the household logistics moving: floor replacement is running at home every day, Dolphin Club lunch orders are due Thursday, and Henry has a packed handoff from GDP Elite Summer Camp into the Pre-MLS party Saturday and Pali Adventures drop-off Sunday. Meals are light but planned enough to shop around egg salad, chicken shawarma, and pizza night.",
   wc_news: [
     "⭐ Messi is now the all-time top World Cup scorer",
     "🍁 Canada claims their first-ever World Cup win",
@@ -337,6 +347,15 @@ const D = {
 <!-- ══════════ MAIN GRID ══════════ -->
 <div class="main">
 
+  <!-- WEEK BRIEF -->
+  <div class="card c-brief">
+    <div class="card-hdr">
+      <div class="card-icon">✨</div>
+      <div class="card-title">Week at a Glance</div>
+    </div>
+    <div class="card-body" id="brief-body"></div>
+  </div>
+
   <!-- TODAY -->
   <div class="card c-today">
     <div class="card-hdr">
@@ -421,6 +440,54 @@ function updateClock(){
 updateClock();setInterval(updateClock,10000);
 document.getElementById('upd').textContent=D.updated;
 
+// ── WEEK BRIEF ──
+(function(){
+  var summary=(D.week_summary||'').trim();
+  document.getElementById('brief-body').innerHTML=summary
+    ? '<p class="brief-text">'+escHtml(summary)+'</p>'
+    : '<div class="brief-empty">No weekly summary yet.</div>';
+})();
+
+// Add future event-logo rules here. First matching rule wins.
+var EVENT_LOGOS=[
+  {
+    src:'assets/la-galaxy-logo.png',
+    alt:'LA Galaxy',
+    matches:function(ev){return /\b(GDP|LA Galaxy)\b/i.test(eventSearchText(ev));}
+  },
+  {
+    src:'assets/man-city-logo.svg',
+    alt:'Manchester City',
+    matches:function(ev){return /\bMan City\b/i.test(eventSearchText(ev));}
+  },
+  {
+    src:'assets/touch-n-go-logo.png',
+    alt:'Touch n Go',
+    matches:function(ev){return /\bTNG\b/i.test(eventSearchText(ev)) || /\bTouch[\s-]*(?:&|and|n|'n)?[\s-]*Go\b/i.test(eventSearchText(ev));}
+  },
+  {
+    src:'assets/socal-reds-logo.png',
+    alt:'SoCal Reds',
+    matches:function(ev){
+      var label=String((ev&&(ev.title||ev.label))||'').trim();
+      return /^Soccer Training\b/i.test(label) || /^Tournament(?:\s+Game)?\b/i.test(label) || (ev&&ev.type==='tournament');
+    }
+  }
+];
+function eventSearchText(ev){
+  return [ev&&ev.title,ev&&ev.label,ev&&ev.notes,ev&&ev.loc,ev&&ev.location].filter(Boolean).join(' ');
+}
+function eventLogo(ev){
+  for(var i=0;i<EVENT_LOGOS.length;i++){
+    if(EVENT_LOGOS[i].matches(ev))return EVENT_LOGOS[i];
+  }
+  return null;
+}
+function eventLogoHtml(ev,cls){
+  var logo=eventLogo(ev);
+  return logo?'<img class="event-logo '+(cls||'')+'" src="'+escHtml(logo.src)+'" alt="'+escHtml(logo.alt)+'">':'';
+}
+
 // ── TODAY EVENTS ──
 (function(){
   var h='';
@@ -431,10 +498,11 @@ document.getElementById('upd').textContent=D.updated;
       var name=ev.cls==='henry'?'Henry':ev.cls==='ripley'?'Ripley':'Household';
       var label=escHtml(ev.label||'');
       var labelHtml=ev.url?'<a class="ev-link" href="'+escHtml(ev.url)+'" target="_blank" rel="noopener">'+label+' ↗</a>':label;
+      var logo=eventLogoHtml(ev);
       h+=`<div class="ev">
         <div class="ev-bubble ${ev.cls}">${ev.icon||'📌'}</div>
         <div class="ev-info">
-          <div class="ev-name">${labelHtml}</div>
+          <div class="ev-name">${logo}${labelHtml}</div>
           ${ev.time?`<div class="ev-time">⏰ ${escHtml(ev.time)}</div>`:''}
           ${ev.loc?`<div class="ev-loc">📍 ${escHtml(ev.loc)}</div>`:''}
           <span class="ev-tag ${ev.cls}">${name}</span>
@@ -480,9 +548,10 @@ renderReminders();
       <div class="day-evs">`;
     (day.events||[]).forEach(function(ev){
       var label=escHtml(ev.label||'');
+      var logo=eventLogoHtml(ev);
       h+=ev.url
-        ? `<a class="day-ev ${ev.cls}" href="${escHtml(ev.url)}" target="_blank" rel="noopener">${label} ↗</a>`
-        : `<div class="day-ev ${ev.cls}">${label}</div>`;
+        ? `<a class="day-ev ${ev.cls}" href="${escHtml(ev.url)}" target="_blank" rel="noopener">${logo}${label} ↗</a>`
+        : `<div class="day-ev ${ev.cls}">${logo}${label}</div>`;
     });
     h+='</div></div>';
   });
